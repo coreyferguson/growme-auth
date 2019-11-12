@@ -1,0 +1,27 @@
+{
+  "name": "overattribution-auth",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "deploy": "./node_modules/.bin/sls deploy",
+    "remove": "./node_modules/.bin/sls remove",
+    "test": "./node_modules/.bin/mocha 'test/**/*.spec.js' --recursive --reporter progress",
+    "test:watch": "npm test -- --watch"
+  },
+  "keywords": [],
+  "author": "Corey Ferguson <corey.t.ferguson@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "aws-sdk": "^2.569.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "dot": "^1.1.2",
+    "install": "^0.13.0",
+    "mocha": "^6.2.0",
+    "npm": "^6.11.2",
+    "serverless": "^1.57.0",
+    "sinon": "^7.4.1",
+    "sinon-chai": "^3.3.0"
+  }
+}

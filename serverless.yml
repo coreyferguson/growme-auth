@@ -1,0 +1,122 @@
+
+service: overattribution-auth
+
+frameworkVersion: "=1.57.0"
+
+provider:
+  name: aws
+  runtime: nodejs10.x
+  stage: ${opt:stage, env:stage, 'dev'}
+  region: us-west-2
+
+plugins:
+  - ./serverless-plugins/serverless-oauth-provider.js
+
+custom:
+  oauthProvider:
+    # domain = `${subDomain}.${domain}`
+    domain: overattribution.com
+    subDomain: auth
+    identityPoolName: overattribution_auth_${self:provider.stage}
+    userPoolName: ${self:service}-${self:provider.stage}
+
+resources:
+  Resources:
+
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        AliasAttributes:
+          - email
+          - preferred_username
+        AutoVerifiedAttributes:
+          - email
+        DeviceConfiguration:
+          ChallengeRequiredOnNewDevice: true
+          DeviceOnlyRememberedOnUserPrompt: true
+        MfaConfiguration: OFF
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 6
+            RequireLowercase: false
+            RequireNumbers: false
+            RequireSymbols: false
+            RequireUppercase: false
+            TemporaryPasswordValidityDays: 7
+        UserPoolName: ${self:custom.oauthProvider.userPoolName}
+
+    CognitoIdentityPool:
+      Type: AWS::Cognito::IdentityPool
+      Properties:
+        AllowUnauthenticatedIdentities: true
+        IdentityPoolName: ${self:custom.oauthProvider.identityPoolName}
+
+    IdentityPoolUnauthRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.oauthProvider.identityPoolName}_identity_pool_unauth_role
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Federated: cognito-identity.amazonaws.com
+              Action: sts:AssumeRoleWithWebIdentity
+              Condition:
+                StringEquals:
+                  cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+                ForAnyValue:StringLike:
+                  cognito-identity.amazonaws.com:amr: unauthenticated
+        Policies:
+          - PolicyName: ${self:custom.oauthProvider.identityPoolName}_unauth_role_default_policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "mobileanalytics:PutEvents"
+                    - "cognito-sync:*"
+                  Resource: "*"
+
+    IdentityPoolAuthRole:
+      Type: AWS::IAM::Role
+      Properties:
+        RoleName: ${self:custom.oauthProvider.identityPoolName}_identity_pool_auth_role
+        AssumeRolePolicyDocument:
+          Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Principal:
+                Federated: cognito-identity.amazonaws.com
+              Action: sts:AssumeRoleWithWebIdentity
+              Condition:
+                StringEquals:
+                  cognito-identity.amazonaws.com:aud: !Ref CognitoIdentityPool
+                ForAnyValue:StringLike:
+                  cognito-identity.amazonaws.com:amr: authenticated
+        Policies:
+          - PolicyName: ${self:custom.oauthProvider.identityPoolName}_auth_role_default_policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "mobileanalytics:PutEvents"
+                    - "cognito-sync:*"
+                  Resource: "*"
+          - PolicyName: ${self:custom.oauthProvider.identityPoolName}_identity_${self:provider.stage}_auth_role_apigateway_policy
+            PolicyDocument:
+              Version: "2012-10-17"
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - "execute-api:Invoke"
+                  Resource: "arn:aws:execute-api:us-west-2:863138142000:lbjlned1ph/${self:provider.stage}/*/*"
+
+    IdentityPoolRoleAttachment:
+      Type: AWS::Cognito::IdentityPoolRoleAttachment
+      Properties:
+        IdentityPoolId: !Ref CognitoIdentityPool
+        Roles:
+          unauthenticated: !GetAtt IdentityPoolUnauthRole.Arn
+          authenticated: !GetAtt IdentityPoolAuthRole.Arn
