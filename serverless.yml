@@ -1,5 +1,5 @@
 
-service: overattribution-auth
+service: growme-auth
 
 frameworkVersion: "=1.57.0"
 
@@ -15,10 +15,11 @@ plugins:
 custom:
   oauthProvider:
     # domain = `${subDomain}.${domain}`
-    domain: overattribution.com
+    domain: growme.fyi
     subDomain: auth
-    identityPoolName: overattribution_auth_${self:provider.stage}
+    identityPoolName: growme_auth_${self:provider.stage}
     userPoolName: ${self:service}-${self:provider.stage}
+    certificateArn: arn:aws:acm:us-east-1:863138142000:certificate/2bf0b9d2-f40e-409d-b963-a88e59e51d3a
 
 resources:
   Resources:

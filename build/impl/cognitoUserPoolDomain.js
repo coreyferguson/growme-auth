@@ -24,9 +24,7 @@ class CognitoUserPoolDomain extends BuildCommand {
     await this.userPool.createUserPoolDomain({
       Domain: this.getFullDomain(config.domain, config.subDomain, stage),
       UserPoolId: userPoolId,
-      CustomDomainConfig: {
-        CertificateArn: 'arn:aws:acm:us-east-1:863138142000:certificate/078933c7-2e00-415f-b964-ead49b37f915'
-      }
+      CustomDomainConfig: { CertificateArn: config.certificateArn }
     }).promise();
   }
 

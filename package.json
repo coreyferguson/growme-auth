@@ -1,7 +1,7 @@
 {
-  "name": "overattribution-auth",
+  "name": "growme-auth",
   "version": "1.0.0",
-  "description": "",
+  "description": "Authentication provider for growme applications.",
   "main": "index.js",
   "scripts": {
     "deploy": "./node_modules/.bin/sls deploy",

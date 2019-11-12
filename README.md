@@ -1,9 +1,9 @@
 
-# OverAttribution Authentication
+# GrowMe Authentication
 
 ## Summary
 
-Provides the authentication for all subdomains of overattribution.com.
+Provides the authentication for all subdomains of growme.fyi.
 
 ## Deploy
 
