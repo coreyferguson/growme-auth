@@ -18,14 +18,23 @@ class CognitoIdentityPoolProvider extends BuildCommand {
 
   async do(options) {
     options = options || {};
-    const { config, service, stage } = options;
+    const { config, region, service, stage } = options;
     const userPoolId = await this.userPoolFacade.getUserPoolId(service, stage);
-    const clientId = await this.userPoolFacade.getClientId(service, stage, 'flash');
+    // TODO: Unhardcode "go" client
+    const clientId = await this.userPoolFacade.getClientId(service, stage, 'go');
     const IdentityPoolId = await this.getIdentityPoolId(config.identityPoolName);
     const identityPool = await this.identity.describeIdentityPool({ IdentityPoolId }).promise();
     identityPool.CognitoIdentityProviders = identityPool.CognitoIdentityProviders || [];
     identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, clientId));
     await this.identity.updateIdentityPool(identityPool).promise();
+    const params = await this.identity.getIdentityPoolRoles({ IdentityPoolId }).promise();
+    const roleMappingKey = `cognito-idp.us-west-2.amazonaws.com/${userPoolId}:${clientId}`;
+    params.RoleMappings = params.RoleMappings || {};
+    params.RoleMappings[roleMappingKey] = {
+      Type: 'Token',
+      AmbiguousRoleResolution: 'Deny'
+    };
+    await this.identity.setIdentityPoolRoles(params).promise();
   }
 
   async undo(options) {
@@ -38,10 +47,12 @@ class CognitoIdentityPoolProvider extends BuildCommand {
   }
 
   async isDone(options) {
+    return false;
     options = options || {};
     const { config, service, stage } = options;
     const userPoolId = await this.userPoolFacade.getUserPoolId(service, stage);
-    const clientId = await this.userPoolFacade.getClientId(service, stage, 'flash');
+    // TODO: Unhardcode "go" client
+    const clientId = await this.userPoolFacade.getClientId(service, stage, 'go');
     const IdentityPoolId = await this.getIdentityPoolId(config.identityPoolName);
     const identityPool = await this.identity.describeIdentityPool({ IdentityPoolId }).promise();
     if (!identityPool.CognitoIdentityProviders) return false;

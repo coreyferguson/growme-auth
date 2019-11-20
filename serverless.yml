@@ -105,14 +105,6 @@ resources:
                     - "mobileanalytics:PutEvents"
                     - "cognito-sync:*"
                   Resource: "*"
-          - PolicyName: ${self:custom.oauthProvider.identityPoolName}_identity_${self:provider.stage}_auth_role_apigateway_policy
-            PolicyDocument:
-              Version: "2012-10-17"
-              Statement:
-                - Effect: Allow
-                  Action:
-                    - "execute-api:Invoke"
-                  Resource: "arn:aws:execute-api:us-west-2:863138142000:lbjlned1ph/${self:provider.stage}/*/*"
 
     IdentityPoolRoleAttachment:
       Type: AWS::Cognito::IdentityPoolRoleAttachment

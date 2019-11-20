@@ -58,26 +58,30 @@ class ServerlessPlugin {
   }
 
   async afterDeploy() {
-    const stage = this.serverless.service.provider.stage;
-    const service = this.serverless.service.service;
     const config = this.serverless.service.custom.oauthProvider;
+    const region = this.serverless.service.provider.region;
+    const service = this.serverless.service.service;
+    const stage = this.serverless.service.provider.stage;
     await buildInvoker.deploy({
-      service,
-      stage,
+      config,
       log: this.serverless.cli.log.bind(this.serverless.cli),
-      config
+      region,
+      service,
+      stage
     });
   }
 
   async beforeRemove() {
-    const stage = this.serverless.service.provider.stage;
-    const service = this.serverless.service.service;
     const config = this.serverless.service.custom.oauthProvider;
+    const region = this.serverless.service.provider.region;
+    const service = this.serverless.service.service;
+    const stage = this.serverless.service.provider.stage;
     await buildInvoker.remove({
-      service,
-      stage,
+      config,
       log: this.serverless.cli.log.bind(this.serverless.cli),
-      config
+      region,
+      service,
+      stage
     });
   }
 }

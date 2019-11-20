@@ -11,14 +11,14 @@
         "profile"
       ],
       "CallbackURLs": [
-        "https://flash{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/callback"
-        {{=it.stage !== 'prod' ? `, "https://flash-local.${it.domain}.com:9000/oauth/callback"` : ''}}
+        "https://go{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/callback"
+        {{=it.stage !== 'prod' ? `, "https://go-local.${it.domain}:9000/oauth/callback"` : ''}}
       ],
-      "ClientName": "flash",
+      "ClientName": "go",
       "GenerateSecret": false,
       "LogoutURLs": [
-        "https://flash{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}.com/oauth/signout"
-        {{=it.stage !== 'prod' ? `, "https://flash-local.${it.domain}.com:9000/oauth/signout"` : ''}}
+        "https://go{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/signout"
+        {{=it.stage !== 'prod' ? `, "https://go-local.${it.domain}:9000/oauth/signout"` : ''}}
       ],
       "ReadAttributes": [
         "address",
