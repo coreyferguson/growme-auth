@@ -11,14 +11,14 @@
         "profile"
       ],
       "CallbackURLs": [
-        "https://go{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/callback"
-        {{=it.stage !== 'prod' ? `, "https://go-local.${it.domain}:9000/oauth/callback"` : ''}}
+        "https://{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/callback"
+        {{=it.stage !== 'prod' ? `, "https://local.${it.domain}:9000/oauth/callback"` : ''}}
       ],
       "ClientName": "go",
       "GenerateSecret": false,
       "LogoutURLs": [
-        "https://go{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/signout"
-        {{=it.stage !== 'prod' ? `, "https://go-local.${it.domain}:9000/oauth/signout"` : ''}}
+        "https://{{=it.stage === 'prod' ? '' : `-${it.stage}`}}.{{=it.domain}}/oauth/signout"
+        {{=it.stage !== 'prod' ? `, "https://local.${it.domain}:9000/oauth/signout"` : ''}}
       ],
       "ReadAttributes": [
         "address",
