@@ -21,19 +21,24 @@ class CognitoIdentityPoolProvider extends BuildCommand {
     const { config, region, service, stage } = options;
     const userPoolId = await this.userPoolFacade.getUserPoolId(service, stage);
     // TODO: Unhardcode "go" client
-    const clientId = await this.userPoolFacade.getClientId(service, stage, 'go');
+    const goClientId = await this.userPoolFacade.getClientId(service, stage, 'go');
+    const flashClientId = await this.userPoolFacade.getClientId(service, stage, 'flash');
     const IdentityPoolId = await this.getIdentityPoolId(config.identityPoolName);
     const identityPool = await this.identity.describeIdentityPool({ IdentityPoolId }).promise();
     identityPool.CognitoIdentityProviders = identityPool.CognitoIdentityProviders || [];
-    identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, clientId));
+    identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, goClientId));
+    identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, flashClientId));
     await this.identity.updateIdentityPool(identityPool).promise();
     const params = await this.identity.getIdentityPoolRoles({ IdentityPoolId }).promise();
-    const roleMappingKey = `cognito-idp.us-west-2.amazonaws.com/${userPoolId}:${clientId}`;
-    params.RoleMappings = params.RoleMappings || {};
-    params.RoleMappings[roleMappingKey] = {
-      Type: 'Token',
-      AmbiguousRoleResolution: 'Deny'
+    const addRoleMapping = clientId => {
+      const roleMappingKey = `cognito-idp.us-west-2.amazonaws.com/${userPoolId}:${clientId}`;
+      params.RoleMappings = params.RoleMappings || {};
+      params.RoleMappings[roleMappingKey] = {
+        Type: 'Token',
+        AmbiguousRoleResolution: 'Deny'
+      };
     };
+    addRoleMapping(goClientId);
     await this.identity.setIdentityPoolRoles(params).promise();
   }
 
