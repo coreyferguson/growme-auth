@@ -1,9 +1,9 @@
 
-# GrowMe Authentication
+# SCIL Authentication
 
 ## Summary
 
-Provides the authentication for all subdomains of growme.fyi.
+Provides the authentication for all subdomains of scil.help.
 
 ## Deploy
 

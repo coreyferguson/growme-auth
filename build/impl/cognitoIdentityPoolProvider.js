@@ -22,12 +22,10 @@ class CognitoIdentityPoolProvider extends BuildCommand {
     const userPoolId = await this.userPoolFacade.getUserPoolId(service, stage);
     // TODO: Unhardcode "go" client
     const goClientId = await this.userPoolFacade.getClientId(service, stage, 'go');
-    const flashClientId = await this.userPoolFacade.getClientId(service, stage, 'flash');
     const IdentityPoolId = await this.getIdentityPoolId(config.identityPoolName);
     const identityPool = await this.identity.describeIdentityPool({ IdentityPoolId }).promise();
     identityPool.CognitoIdentityProviders = identityPool.CognitoIdentityProviders || [];
     identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, goClientId));
-    identityPool.CognitoIdentityProviders.push(this.newCognitoIdentityProvider(userPoolId, flashClientId));
     await this.identity.updateIdentityPool(identityPool).promise();
     const params = await this.identity.getIdentityPoolRoles({ IdentityPoolId }).promise();
     const addRoleMapping = clientId => {

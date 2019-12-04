@@ -1,7 +1,7 @@
 {
-  "name": "growme-auth",
+  "name": "scil-auth",
   "version": "1.0.0",
-  "description": "Authentication provider for growme applications.",
+  "description": "Authentication provider for SCIL applications.",
   "main": "index.js",
   "scripts": {
     "deploy": "./node_modules/.bin/sls deploy",
