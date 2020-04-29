@@ -3,7 +3,7 @@
 
 ## Summary
 
-Provides the authentication for all subdomains of scil.help.
+Provides the authentication for all subdomains of scil.link.
 
 ## Deploy
 

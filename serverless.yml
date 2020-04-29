@@ -15,11 +15,11 @@ plugins:
 custom:
   oauthProvider:
     # domain = `${subDomain}.${domain}`
-    domain: scil.help
+    domain: scil.link
     subDomain: auth
     identityPoolName: scil_auth_${self:provider.stage}
     userPoolName: ${self:service}-${self:provider.stage}
-    certificateArn: arn:aws:acm:us-east-1:935522883202:certificate/1ae18cdf-07fc-481a-afda-62510ffc8e4c
+    certificateArn: arn:aws:acm:us-east-1:935522883202:certificate/8e02fdf2-0513-4aa1-be91-6ec8df6ebed7
 
 resources:
   Resources:
