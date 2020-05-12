@@ -1,7 +1,7 @@
 
-service: growme-auth
+service: wayne4m-auth
 
-frameworkVersion: "=1.57.0"
+frameworkVersion: "=1.70.0"
 
 provider:
   name: aws
@@ -14,12 +14,11 @@ plugins:
 
 custom:
   oauthProvider:
-    # domain = `${subDomain}.${domain}`
-    domain: growme.fyi
+    domain: wayne4m.com
     subDomain: auth
-    identityPoolName: growme_auth_${self:provider.stage}
+    identityPoolName: ${self:custom.oauthProvider.domain}_auth_${self:provider.stage}
     userPoolName: ${self:service}-${self:provider.stage}
-    certificateArn: arn:aws:acm:us-east-1:863138142000:certificate/2bf0b9d2-f40e-409d-b963-a88e59e51d3a
+    certificateArn: arn:aws:acm:us-east-1:935522883202:certificate/ecbde0ad-d555-4654-911c-3eba9712a2e6
 
 resources:
   Resources:
