@@ -16,7 +16,7 @@ custom:
   oauthProvider:
     domain: wayne4m.com
     subDomain: auth
-    identityPoolName: ${self:custom.oauthProvider.domain}_auth_${self:provider.stage}
+    identityPoolName: wayne4m_com_auth_${self:provider.stage}
     userPoolName: ${self:service}-${self:provider.stage}
     certificateArn: arn:aws:acm:us-east-1:935522883202:certificate/ecbde0ad-d555-4654-911c-3eba9712a2e6
 
