@@ -17,7 +17,7 @@ describe('cognitoUserPoolIdpGoogle', () => {
     const command = new CognitoUserPoolIdpGoogle({ userPool, userPoolFacade });
     const response = describeIdentityProviderResponse;
     sandbox.stub(userPool, 'describeIdentityProvider').returns({ promise: () => Promise.resolve(response) });
-    await expect(command.isDone('test')).to.eventually.be.true;
+    await expect(command.isDone({ service: 'overattribution-auth', stage: 'test' })).to.eventually.be.true;
   });
 
   it('isDone - false', async() => {
@@ -26,20 +26,21 @@ describe('cognitoUserPoolIdpGoogle', () => {
     const error = new Error('no idp');
     error.code = 'ResourceNotFoundException';
     sandbox.stub(userPool, 'describeIdentityProvider').returns({ promise: () => Promise.reject(error) });
-    await expect(command.isDone('test')).to.eventually.be.false;
+    await expect(command.isDone({ service: 'overattribution-auth', stage: 'test' })).to.eventually.be.false;
   });
 
   it('do - unknown error', async () => {
     const command = new CognitoUserPoolIdpGoogle({ userPool, userPoolFacade });
     sandbox.stub(userPool, 'createIdentityProvider').returns({ promise: () => Promise.reject(new Error('oops')) });
     sandbox.stub(command, 'getCredentials').returns({});
-    await expect(command.do('test')).to.be.rejectedWith('oops');
+    await expect(command.do({ service: 'overattribution-auth', stage: 'test' })).to.be.rejectedWith('oops');
   });
 
   it('undo - unknown error', async () => {
     const command = new CognitoUserPoolIdpGoogle({ userPool, userPoolFacade });
+    sandbox.stub(userPoolFacade, 'getUserPoolId').returns(Promise.resolve());
     sandbox.stub(userPool, 'deleteIdentityProvider').returns({ promise: () => Promise.reject(new Error('oops')) });
-    await expect(command.undo('test')).to.be.rejectedWith('oops');
+    await expect(command.undo({ service: 'overattribution-auth', stage: 'test' })).to.be.rejectedWith('oops');
   });
 
   it('getCredentials - success', async () => {
@@ -67,7 +68,7 @@ describe('cognitoUserPoolIdpGoogle', () => {
         "InvalidParameters": []
       })
     });
-    const credentials = await command.getCredentials('test');
+    const credentials = await command.getCredentials('overattribution-auth', 'test');
     expect(credentials).to.deep.equal({
       COGNITO_USER_POOL_IDP_GOOGLE_CLIENT_ID: '1234',
       COGNITO_USER_POOL_IDP_GOOGLE_SECRET: '4321'
@@ -93,7 +94,7 @@ describe('cognitoUserPoolIdpGoogle', () => {
         ]
       })
     });
-    await expect(command.getCredentials('test')).to.eventually.be.rejected;
+    await expect(command.getCredentials('overattribution-auth', 'test')).to.eventually.be.rejected;
   });
 
 });

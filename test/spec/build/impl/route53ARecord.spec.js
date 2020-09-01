@@ -50,7 +50,7 @@ describe('route53ARecord', () => {
       "MaxItems": "100"
     };
     sandbox.stub(route53, 'listHostedZonesByName').returns({ promise: () => Promise.resolve(response) });
-    const hostedZoneId = await command.getHostedZoneId();
+    const hostedZoneId = await command.getHostedZoneId('overattribution.com');
     expect(hostedZoneId).to.equal('A1B2CDEFGHIJ34');
   });
 
@@ -94,17 +94,19 @@ describe('route53ARecord', () => {
   it('isDone - no record set found', async () => {
     const command = new Route53ARecord({ route53 });
     const response = resourceRecordSetsWithoutARecord;
+    sandbox.stub(command, 'getFullDomainName').returns('nothere.overattribution.com');
     sandbox.stub(command, 'getHostedZoneId').returns('/hostedzone/A1B2CDEFGHIJ34');
     sandbox.stub(route53, 'listResourceRecordSets').returns({ promise: () => Promise.resolve(response) });
-    await expect(command.isDone('test')).to.eventually.be.false;
+    await expect(command.isDone({ config: {}, stage: 'test' })).to.eventually.be.false;
   });
 
   it('isDone - record set found', async () => {
     const command = new Route53ARecord({ route53 });
     const response = resourceRecordSetsWithARecord;
-    sandbox.stub(command, 'getHostedZoneId').returns('/hostedzone/A1B2CDEFGHIJ34');
+    sandbox.stub(command, 'getFullDomainName').returns('sub2.overattribution.com');
+    sandbox.stub(command, 'getHostedZoneId').returns(Promise.resolve('/hostedzone/A1B2CDEFGHIJ34'));
     sandbox.stub(route53, 'listResourceRecordSets').returns({ promise: () => Promise.resolve(response) });
-    await expect(command.isDone('test')).to.eventually.be.true;
+    await expect(command.isDone({ config: {}, stage: 'test' })).to.eventually.be.true;
   });
 
   it('getCloudFrontDns - success', async () => {
@@ -137,10 +139,10 @@ describe('route53ARecord', () => {
 
   it('do - unknown error', async () => {
     const command = new Route53ARecord({ route53 });
-    sandbox.stub(route53, 'changeResourceRecordSets').returns({ promise: () => Promise.reject(new Error('oops')) });
     sandbox.stub(command, 'getHostedZoneId');
     sandbox.stub(command, 'getCloudFrontDns');
-    await expect(command.do('test')).to.eventually.be.rejectedWith('oops');
+    sandbox.stub(route53, 'changeResourceRecordSets').returns({ promise: () => Promise.reject(new Error('oops')) });
+    await expect(command.do({ config: {}, stage: 'test' })).to.eventually.be.rejectedWith('oops');
   });
 
   it('undo - error', async () => {
@@ -148,7 +150,7 @@ describe('route53ARecord', () => {
     sandbox.stub(route53, 'changeResourceRecordSets').returns({ promise: () => Promise.reject(new Error('oops')) });
     sandbox.stub(command, 'getHostedZoneId');
     sandbox.stub(command, 'getCloudFrontDns');
-    await expect(command.undo('test')).to.eventually.be.rejectedWith('oops');
+    await expect(command.undo({ config: {}, stage: 'test' })).to.eventually.be.rejectedWith('oops');
   });
 
 });
