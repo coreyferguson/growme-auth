@@ -13,7 +13,7 @@
   "author": "Corey Ferguson <corey.t.ferguson@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "aws-sdk": "^2.569.0",
+    "aws-sdk": "^2.814.0",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "dot": "^1.1.2",
