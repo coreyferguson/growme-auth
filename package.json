@@ -18,7 +18,7 @@
     "chai-as-promised": "^7.1.1",
     "dot": "^1.1.2",
     "install": "^0.13.0",
-    "mocha": "^6.2.0",
+    "mocha": "^10.2.0",
     "npm": "^6.11.2",
     "serverless": "^1.57.0",
     "sinon": "^7.4.1",
